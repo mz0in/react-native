@@ -48,7 +48,10 @@ class YG_EXPORT Node : public ::YGNode {
   std::array<YGValue, 2> resolvedDimensions_ = {
       {YGValueUndefined, YGValueUndefined}};
 
-  float relativePosition(FlexDirection axis, const float axisSize) const;
+  float relativePosition(
+      FlexDirection axis,
+      Direction direction,
+      const float axisSize) const;
 
   YGEdge getInlineStartEdgeUsingErrata(
       FlexDirection flexDirection,
@@ -197,13 +200,27 @@ class YG_EXPORT Node : public ::YGNode {
 
   // Methods related to positions, margin, padding and border
   bool isFlexStartPositionDefined(FlexDirection axis) const;
+  bool isInlineStartPositionDefined(FlexDirection axis, Direction direction)
+      const;
   bool isFlexEndPositionDefined(FlexDirection axis) const;
+  bool isInlineEndPositionDefined(FlexDirection axis, Direction direction)
+      const;
   float getFlexStartPosition(FlexDirection axis, float axisSize) const;
+  float getInlineStartPosition(
+      FlexDirection axis,
+      Direction direction,
+      float axisSize) const;
   float getFlexEndPosition(FlexDirection axis, float axisSize) const;
+  float getInlineEndPosition(
+      FlexDirection axis,
+      Direction direction,
+      float axisSize) const;
+  float getFlexStartMargin(FlexDirection axis, float widthSize) const;
   float getInlineStartMargin(
       FlexDirection axis,
       Direction direction,
       float widthSize) const;
+  float getFlexEndMargin(FlexDirection axis, float widthSize) const;
   float getInlineEndMargin(
       FlexDirection axis,
       Direction direction,
@@ -324,7 +341,6 @@ class YG_EXPORT Node : public ::YGNode {
       const float mainSize,
       const float crossSize,
       const float ownerWidth);
-  void markDirtyAndPropagateDownwards();
 
   // Other methods
   YGValue getFlexStartMarginValue(FlexDirection axis) const;
