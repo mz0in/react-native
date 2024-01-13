@@ -1,8 +1,59 @@
 # Changelog
 
+## v0.73.2
+
+### Added
+
+- Unhandled promise rejection - attach non-standard Error object stack info if possible ([655b12dbfa](https://github.com/facebook/react-native/commit/655b12dbfaa2c48f9fd38bbe8311e6f935045b30) by [@ospfranco](https://github.com/ospfranco))
+
+### Changed
+
+- Bump Metro to ^v0.80.3 ([16dff523b0](https://github.com/facebook/react-native/commit/16dff523b0a16d7fa9b651062c386885c2f48a6b) by [@huntie](https://github.com/huntie))
+- Automatically reconnect to an existing debugger session on relaunching the app ([0806ad7854](https://github.com/facebook/react-native/commit/0806ad785458009887ff4c67b995ec992a010702) by [@motiz88](https://github.com/motiz88))
+
+#### iOS specific
+
+- Update ios pod post_install logic for detecting if hermes is enabled ([d6163d7f43](https://github.com/facebook/react-native/commit/d6163d7f43a753f24148450033491dfc9c5d0c36) by [@gabrieldonadel](https://github.com/gabrieldonadel))
+
+
+### Fixed
+
+- Fix comment about adding packages in android template ([ac9b87cd57](https://github.com/facebook/react-native/commit/ac9b87cd57029a0f0876aaec8d259d9befba9838) by [@janicduplessis](https://github.com/janicduplessis))
+- Fix boost download url ([7e721f09ad](https://github.com/facebook/react-native/commit/7e721f09ad3dafed9f490f433b2ac613786c27b2) by [@cipolleschi](https://github.com/cipolleschi))
+
+#### iOS specific
+
+- Fix horizontal scrollview scrollTo coordinate space in RTL on oldarch ([e809e0aca7](https://github.com/facebook/react-native/commit/e809e0aca713ad12f91778b09f5297f1da866b26) by [@NickGerleman](https://github.com/NickGerleman))
+- [enhance IP address retrieval for iOS devices in Metro bundler setup](https://github.com/facebook/react-native/pull/41839/commits/6a351db158dadf944933173aa0150435c742001f) ([9f28616650](https://github.com/facebook/react-native/commit/9f28616650a61ca298c2fc710b588445b8ceb94c) by [@Morritz](https://github.com/Morritz))
+
+
 This file contains all changelogs for latest releases, from 0.70.0 onward. Please check out the other `CHANGELOG-*.md` files for previous versions.
 
-## v0.73.0-rc.4
+## v0.73.1
+
+### Added
+
+- Add `enableNetworkInspector` experiment to enable Network panel and CDP handlers in inspector proxy ([8ef807bfb2](https://github.com/facebook/react-native/commit/8ef807bfb2e596bd70f0c8b17f1b6f698d98ae2a) by [@byCedric](https://github.com/byCedric))
+
+### Changed
+
+- Chore: bump CLI to 12.3.0 ([dff11ab993](https://github.com/facebook/react-native/commit/dff11ab993e57a097988537791afe8ef086e4ce4) by [@szymonrybczak](https://github.com/szymonrybczak))
+
+### Fixed
+
+- Fix last spacer constrain logic in VirtualizedList ([3ed4bf9046](https://github.com/facebook/react-native/commit/3ed4bf9046ae125d244283c3556892345bfd77e1) by [@janicduplessis](https://github.com/janicduplessis))
+
+
+#### Android specific
+
+- Fix type for unrecognisable field mBinding ([31d8a93bf3](https://github.com/facebook/react-native/commit/31d8a93bf3199432bcd2b577738fbf49e84c207d) by [@piaskowyk](https://github.com/piaskowyk))
+
+#### iOS specific
+
+- Fix NSAppTransportSecurity being overwritten during pod install ([a0b76d90b7](https://github.com/facebook/react-native/commit/a0b76d90b73ec0d3d9e0174004bfb96a5b6f3a3e) by [@robertying](https://github.com/robertying))
+
+
+## v0.73.0
 
 ### Breaking
 
@@ -28,6 +79,7 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - W3CPointerEvents: change click event from direct to bubbling ([61eb9b4453](https://github.com/facebook/react-native/commit/61eb9b4453c96d3dc662319c9c9f322bf04d1d44))
 - Fix `ReactTextView` `setPadding` applying logic error ([d8ced6f895](https://github.com/facebook/react-native/commit/d8ced6f8953cd896471983714e722caf50783960) by [@jcdhlzq](https://github.com/jcdhlzq))
 - Add `view` getter on `RCTRootView` / `RCTFabricSurfaceHostingProxyRootView ([33e0521788](https://github.com/facebook/react-native/commit/33e0521788484eaba20beeeaabba2496854583a7) by [@zoontek](https://github.com/zoontek))
+- Remove support for Android API < 23 in ReactEditText ([1904e8036a](https://github.com/facebook/react-native/commit/1904e8036a777e463c5517010a254f0d081ae58c) by [@mdvacca](https://github.com/mdvacca))
 
 #### iOS specific
 
@@ -76,6 +128,7 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - Websocket Module setCustomClientBuilder ([0cdb9e6a52](https://github.com/facebook/react-native/commit/0cdb9e6a52f69ebee635d5bfaa34a52f6059dd47) by [@MO-Lewis](https://github.com/MO-Lewis))
 - Remove JNI Binding usage of layoutContext ([733c9289a1](https://github.com/facebook/react-native/commit/733c9289a15afe2c39a6bde56a472fe879a855f8) by [@NickGerleman](https://github.com/NickGerleman))
 - Added testing shadow helpers for robolectric ([4890d50edd](https://github.com/facebook/react-native/commit/4890d50eddbd9035e567134ac9b7d8570bae60f1) by [@philIip](https://github.com/philIip))
+- Android Events - setting default to true to use C++ event pipeline ([b816fa7a65](https://github.com/facebook/react-native/commit/b816fa7a65abe7535c4664d64827646d0ebacf03) by Jesse Watts-Russell)
 
 #### iOS specific
 
@@ -122,7 +175,7 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - Jest globals are now defined using `Object.defineProperties` instead of object property assignment ([cf631ad59f](https://github.com/facebook/react-native/commit/cf631ad59f39bbace1a7c2311a4f66f9494ed0da) by [@yungsters](https://github.com/yungsters))
 - Support mixed props for events in codegen ([b68f53d44f](https://github.com/facebook/react-native/commit/b68f53d44f78c5627905246d8737fe46229f85aa) by [@genkikondo](https://github.com/genkikondo))
 - React-native-codegen: Buck-only: renamed src_prefix kwarg ([9193c4f50c](https://github.com/facebook/react-native/commit/9193c4f50c471193979bab589996d97bab489db4) by [@fkgozali](https://github.com/fkgozali))
-- Bump CLI to 12.0.0 ([126db5eb65](https://github.com/facebook/react-native/commit/126db5eb657ca919becbd14f6915e56262744176))
+- Update CLI to v12.1.1 ([3da0959291](https://github.com/facebook/react-native/commit/3da0959291d34eca45da386a660bff184b7adb9e) by [@szymonrybczak](https://github.com/szymonrybczak))
 
 #### Android specific
 
@@ -152,6 +205,7 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - Kotlin to 1.8.0 and JDK Toolchain to 11 ([74987b6fca](https://github.com/facebook/react-native/commit/74987b6fca4aa31e15f83d871138f4edf258c082) by [@cortinico](https://github.com/cortinico))
 - Deprecate APIs that are deprecate only on JavaDoc ([1be65baf29](https://github.com/facebook/react-native/commit/1be65baf29967ec062f049d57d579694af816c1c) by [@cortinico](https://github.com/cortinico))
 - Gradle to 8.1 ([74f256b6f0](https://github.com/facebook/react-native/commit/74f256b6f019877c2854541845e11e024c16dd44) by [@cortinico](https://github.com/cortinico))
+- "Open Debugger" is no longer available for remote JS debugging from the Dev Menu (non-Hermes). Please use `NativeDevSettings.setIsDebuggingRemotely()`. ([361a944348](https://github.com/facebook/react-native/commit/361a944348e4da5d17f910965d0b89c9e65b18c7) by [@huntie](https://github.com/huntie))
 
 #### iOS specific
 
@@ -287,6 +341,8 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - Update `deprecated-react-native-prop-types` to remove fragile transitive `*` dependencies. ([f00594b262](https://github.com/facebook/react-native/commit/f00594b26203ad2793b40c31d4f882d29daec46e) by [@robhogan](https://github.com/robhogan))
 - Fix `createAnimatedStyle` when providing an undefined transform style ([7e26e0270b](https://github.com/facebook/react-native/commit/7e26e0270b5d9f8490320af563a4943d24d269ea) by [@gabrieldonadel](https://github.com/gabrieldonadel))
 - Bail on hiPri render on missing layout data before checking priority ([817fedb0e7](https://github.com/facebook/react-native/commit/817fedb0e7a5276d86431c65cc886062ed8fe220) by [@NickGerleman](https://github.com/NickGerleman))
+- `react-native/codegen` shouldn't be built unless it's in the repo — fixes `pod install` failures in pnpm setups ([3dd6a83c0e](https://github.com/facebook/react-native/commit/3dd6a83c0e39c54b4ff050589e4e13f1ccc66a5d) by [@tido64](https://github.com/tido64))
+- Correctly declare runtime dependencies ([c32064c510](https://github.com/facebook/react-native/commit/c32064c5102cfd9b48abd25697cef9ceb05d18a3) by [@tido64](https://github.com/tido64))
 
 #### Android specific
 
@@ -329,6 +385,8 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - Fix crash when Android requests permission with activity that does not implement `PermissionAwareActivity` ([cff4bc8eea](https://github.com/facebook/react-native/commit/cff4bc8eead129738a7040f579a18e3819d28bfd) by [@yungsters](https://github.com/yungsters))
 - Fix issue downloading request body via remote URL ([4b39f44a61](https://github.com/facebook/react-native/commit/4b39f44a612e8f358b7f51cdb97b4d602207a754) by [@daisy1754](https://github.com/daisy1754))
 - Fix textTransform not working in New Architecture ([a2f3fa65bc](https://github.com/facebook/react-native/commit/a2f3fa65bcabf8bb711813292002270481840579) by [@tarunrajput](https://github.com/tarunrajput))
+- Fix projects being broken on dependencies starting with `a..` ([5ec2c01697](https://github.com/facebook/react-native/commit/5ec2c016972400cf6e26d987acec6feee46ba6e6) by [@cortinico](https://github.com/cortinico))
+- Fix android root view group removal during instance re-creation ([bb075d785d](https://github.com/facebook/react-native/commit/bb075d785deb3732689bf6aacdc5247187e81391) by [@wschurman](https://github.com/wschurman))
 
 #### iOS specific
 
@@ -358,6 +416,39 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 - Fix RCTImageBlurUtils.m Greyscale Crash ([d6c4f2786c](https://github.com/facebook/react-native/commit/d6c4f2786c1dd8285dbabb7fe872a7d1bddcbe14) by [@OskarEichler](https://github.com/OskarEichler))
 - Logbox footer buttons respect safe area ([6d6b1fdc75](https://github.com/facebook/react-native/commit/6d6b1fdc75d870fa73abc6ee9bf0099f3f15e658) by [@philipheinser](https://github.com/philipheinser))
 - Add support for Components with custom names in the interop layer. ([daedbe6e3e](https://github.com/facebook/react-native/commit/daedbe6e3e4cb4b5fde533bf8205edd89a18c480) by [@cipolleschi](https://github.com/cipolleschi))
+- FP Tolerance in iOS Paper SafeAreaView debouncing ([c9c5651108](https://github.com/facebook/react-native/commit/c9c56511087d6e33bd4d2e86cbc1a76fc99ec8df) by [@NickGerleman](https://github.com/NickGerleman))
+- RNTester-ios / RCTAppDelegate > correctly check for USE_HERMES Flag ([e364553492](https://github.com/facebook/react-native/commit/e3645534920e509f1344e6f83916fcd61723403b) by [@christophpurrer](https://github.com/christophpurrer))
+- Exclude JSI headers when using hermes-engine prebuilt. ([5029cef0a9](https://github.com/facebook/react-native/commit/5029cef0a99469e37bc2f4d72ca2e1f3d6791511) by [@dmytrorykun](https://github.com/dmytrorykun))
+- Purge children from view registry on `RCTUIManager` invalidation. ([bc63e44b23](https://github.com/facebook/react-native/commit/bc63e44b23baddf579d8e42b70af0473314f8e48) by [@kkafar](https://github.com/kkafar))
+- Fix React-ImageManager dependencies ([830c2e7c57](https://github.com/facebook/react-native/commit/830c2e7c571650f49b645e7f9f9445a021e8a0a2) by [@cipolleschi](https://github.com/cipolleschi))
+
+## v0.72.8
+
+### Fixed
+
+- Fix `build_codegen!` not finding `@react-native/codegen` in pnpm setups ([e70166a3a8](https://github.com/facebook/react-native/commit/e70166a3a8b9ddf1a7e322db602c548aaa60102d) by [@tido64](https://github.com/tido64))
+- Correctly declare runtime dependencies ([df2bbba50b](https://github.com/facebook/react-native/commit/df2bbba50bf1484edf88079b965b8841fc7849a8) by [@tido64](https://github.com/tido64))
+- Prevent LogBox from crashing on very long messages ([c3c6cf4](https://github.com/facebook/react-native/commit/c3c6cf4646999e9bf971d2c0e63c41e550069f25) by [@motiz88](https://github.com/motiz88))
+
+## v0.72.7
+
+### Changed
+
+- Bump CLI to v11.3.10 ([e844a62ce9](https://github.com/facebook/react-native/commit/e844a62ce9e6ae70bbeba895dcf902287570f462) by [@szymonrybczak](https://github.com/szymonrybczak))
+
+### Deprecated
+
+- Bump deprecated-react-native-prop-types to ^4.2.3 ([e031c05cdc](https://github.com/facebook/react-native/commit/e031c05cdc5650f17231caf7f60820e1df744788) by [@huntie](https://github.com/huntie))
+
+### Fixed
+
+- Show correct stack frame on unhandled promise rejections on development mode.
+ ([18c9797ecc](https://github.com/facebook/react-native/commit/18c9797ecc8dab220ec68aae011ddb73db17a99d) by [@fortmarek](https://github.com/fortmarek))
+
+#### Android specific
+
+- Fix android crash when apply PlatformColor to borders ([265af222aa](https://github.com/facebook/react-native/commit/265af222aa8acb3b514e22a7db191d66755f553b) by [@axinvd](https://github.com/axinvd))
+- Fix broken Loading/Refreshing indicator on Android ([5dedf277cb](https://github.com/facebook/react-native/commit/5dedf277cb903528659f0d8a71412274d9d32a65) by [@cortinico](https://github.com/cortinico))
 
 ## v0.72.6
 
@@ -834,6 +925,25 @@ This file contains all changelogs for latest releases, from 0.70.0 onward. Pleas
 #### iOS specific
 
 - Enable Address and Undefined Behavior Sanitizers on RNTester ([65e61f3c88](https://github.com/facebook/react-native/commit/65e61f3c88388d4a2ed88bcc9a2cb5ba63fd8afa) by [@Saadnajmi](https://github.com/Saadnajmi))
+
+## v0.71.15
+
+### Fixed
+
+#### Android specific
+- Fix Android crash when apply PlatformColor to borders ([265af222aa](https://github.com/facebook/react-native/commit/265af222aa8acb3b514e22a7db191d66755f553b) by [@axinvd](https://github.com/axinvd))
+- Fixed crash occurring in certain native views when keyboard events are fired. ([9497203957](https://github.com/facebook/react-native/commit/94972039571e1f3b387e0f63227a6ad13740eaf3) by [@kot331107](https://github.com/kot331107))
+
+#### iOS specific
+
+- Migrate away from JFrog to download boost ([ab19fd6aef](https://github.com/facebook/react-native/commit/ab19fd6aef43a739f78cf62155fec59d95f577d3) by [@cipolleschi](https://github.com/cipolleschi))
+- Fix overriding `EXCLUDED_ARCHS` when installing Hermes on RN v0.71 ([16a605b6a3](https://github.com/facebook/react-native/commit/16a605b6a3c320f93b6cda9198d738672086e851) by [@ken0nek](https://github.com/ken0nek))
+
+### Changed
+
+- Update node installation on debian (0.71) ([bdc0ef3466](https://github.com/facebook/react-native/commit/bdc0ef34664b7f1a2b8598ad6092a2ec6cf089ce) by [@cipolleschi](https://github.com/cipolleschi))
+- Bump cli to 10.2.6 ([0bc2dd03c1](https://github.com/facebook/react-native/commit/0bc2dd03c1ccb4ab6ecf55add249f222c5757f06) by [@hurali97](https://github.com/hurali97))
+- Fix version of react-native-codegen ([c74602fe47](https://github.com/facebook/react-native/commit/c74602fe47ca12a151eb173203fb6fce7f3cc964) by [@lunaleaps](https://github.com/lunaleaps))
 
 ## v0.71.14
 

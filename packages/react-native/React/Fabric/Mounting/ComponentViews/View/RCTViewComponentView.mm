@@ -46,8 +46,7 @@ using namespace facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const ViewProps>();
-    _props = defaultProps;
+    _props = ViewShadowNode::defaultSharedProps();
     _reactSubviews = [NSMutableArray new];
     self.multipleTouchEnabled = YES;
   }
@@ -373,11 +372,6 @@ using namespace facebook::react;
   // `testId`
   if (oldViewProps.testId != newViewProps.testId) {
     self.accessibilityIdentifier = RCTNSStringFromString(newViewProps.testId);
-  }
-
-  // `zIndex`
-  if (oldViewProps.zIndex != newViewProps.zIndex) {
-    self.layer.zPosition = newViewProps.zIndex.value_or(0);
   }
 
   _needsInvalidateLayer = _needsInvalidateLayer || needsInvalidateLayer;

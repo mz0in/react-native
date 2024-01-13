@@ -95,10 +95,10 @@ const char* YGErrataToString(const YGErrata value) {
       return "none";
     case YGErrataStretchFlexBasis:
       return "stretch-flex-basis";
-    case YGErrataStartingEndingEdgeFromFlexDirection:
-      return "starting-ending-edge-from-flex-direction";
     case YGErrataPositionStaticBehavesLikeRelative:
       return "position-static-behaves-like-relative";
+    case YGErrataAbsolutePositioning:
+      return "absolute-positioning";
     case YGErrataAll:
       return "all";
     case YGErrataClassic:

@@ -101,14 +101,12 @@ const FileTemplate = ({
 
 #include "${libraryName}JSI.h"
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 ${modules}
 
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react
 `;
 };
 
@@ -236,6 +234,7 @@ module.exports = {
     schema: SchemaType,
     packageName?: string,
     assumeNonnull: boolean = false,
+    headerPrefix?: string,
   ): FilesOutput {
     const nativeModules = getModules(schema);
 

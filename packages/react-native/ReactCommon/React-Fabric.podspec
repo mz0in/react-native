@@ -16,8 +16,10 @@ else
   source[:tag] = "v#{version}"
 end
 
-folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -Wno-comma -Wno-shorten-64-to-32 -Wno-gnu-zero-variadic-macro-arguments'
-folly_version = '2023.08.07.00'
+folly_config = get_folly_config()
+folly_compiler_flags = folly_config[:compiler_flags]
+folly_version = folly_config[:version]
+
 folly_dep_name = 'RCT-Folly/Fabric'
 boost_compiler_flags = '-Wno-documentation'
 react_native_path = ".."
@@ -97,7 +99,7 @@ Pod::Spec.new do |s|
     if ENV['USE_FRAMEWORKS']
       header_search_path = header_search_path + [
         "\"$(PODS_TARGET_SRCROOT)/react/renderer/textlayoutmanager/platform/ios\"",
-        "\"$(PODS_TARGET_SRCROOT)/react/renderer/components/textinput/iostextinput\"",
+        "\"$(PODS_TARGET_SRCROOT)/react/renderer/components/textinput/platform/ios\"",
         "\"$(PODS_TARGET_SRCROOT)/react/renderer/components/view/platform/cxx\"",
       ]
     end
@@ -115,7 +117,7 @@ Pod::Spec.new do |s|
   s.subspec "componentregistry" do |ss|
     ss.dependency             folly_dep_name, folly_version
     ss.compiler_flags       = folly_compiler_flags
-    ss.source_files         = "react/renderer/componentregistry/**/*.{m,mm,cpp,h}"
+    ss.source_files         = "react/renderer/componentregistry/*.{m,mm,cpp,h}"
     ss.header_dir           = "react/renderer/componentregistry"
   end
 
@@ -198,8 +200,7 @@ Pod::Spec.new do |s|
     ss.subspec "textinput" do |sss|
       sss.dependency             folly_dep_name, folly_version
       sss.compiler_flags       = folly_compiler_flags
-      sss.source_files         = "react/renderer/components/textinput/iostextinput/**/*.{m,mm,cpp,h}"
-      sss.exclude_files        = "react/renderer/components/textinput/iostextinput/tests"
+      sss.source_files         = "react/renderer/components/textinput/platform/ios/**/*.{m,mm,cpp,h}"
       sss.header_dir           = "react/renderer/components/iostextinput"
 
     end

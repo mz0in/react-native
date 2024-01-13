@@ -46,7 +46,7 @@ using namespace facebook::react;
 - (instancetype)initWithComponentData:(RCTComponentData *)componentData
                                bridge:(nullable RCTBridge *)bridge
                           bridgeProxy:(nullable RCTBridgeProxy *)bridgeProxy
-                bridgelessInteropData:(RCTBridgeModuleDecorator *)bridgelessInteropData;
+                bridgelessInteropData:(RCTBridgeModuleDecorator *)bridgelessInteropData
 {
   if (self = [super init]) {
     _componentData = componentData;
@@ -89,22 +89,19 @@ using namespace facebook::react;
   [_eventInterceptors removeObjectForKey:[NSNumber numberWithInteger:tag]];
 }
 
-- (UIView *)createPaperViewWithTag:(NSInteger)tag;
+- (UIView *)createPaperViewWithTag:(NSInteger)tag
 {
   UIView *view = [_componentData createViewWithTag:[NSNumber numberWithInteger:tag] rootTag:NULL];
   [_bridgelessInteropData attachInteropAPIsToModule:(id<RCTBridgeModule>)_componentData.bridgelessViewManager];
   return view;
 }
 
-- (void)setProps:(const folly::dynamic &)props forView:(UIView *)view
+- (void)setProps:(NSDictionary<NSString *, id> *)props forView:(UIView *)view
 {
-  if (props.isObject()) {
-    NSDictionary<NSString *, id> *convertedProps = convertFollyDynamicToId(props);
-    [_componentData setProps:convertedProps forView:view];
+  [_componentData setProps:props forView:view];
 
-    if ([view respondsToSelector:@selector(didSetProps:)]) {
-      [view performSelector:@selector(didSetProps:) withObject:[convertedProps allKeys]];
-    }
+  if ([view respondsToSelector:@selector(didSetProps:)]) {
+    [view performSelector:@selector(didSetProps:) withObject:[props allKeys]];
   }
 }
 

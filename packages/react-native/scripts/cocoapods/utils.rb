@@ -86,6 +86,42 @@ class ReactNativePodsUtils
         end
     end
 
+    def self.set_ccache_compiler_and_linker_build_settings(installer, react_native_path, ccache_enabled)
+        projects = self.extract_projects(installer)
+
+        ccache_path = `command -v ccache`.strip
+        ccache_available = !ccache_path.empty?
+
+        message_prefix = "[Ccache]"
+
+        if ccache_available
+            Pod::UI.puts("#{message_prefix}: Ccache found at #{ccache_path}")
+        end
+
+        if ccache_available and ccache_enabled
+            Pod::UI.puts("#{message_prefix}: Setting CC, LD, CXX & LDPLUSPLUS build settings")
+            # Using scripts wrapping the ccache executable, to allow injection of configurations
+            ccache_clang_sh = File.join("$(REACT_NATIVE_PATH)", 'scripts', 'xcode', 'ccache-clang.sh')
+            ccache_clangpp_sh = File.join("$(REACT_NATIVE_PATH)", 'scripts', 'xcode', 'ccache-clang++.sh')
+
+            projects.each do |project|
+                project.build_configurations.each do |config|
+                    # Using the un-qualified names means you can swap in different implementations, for example ccache
+                    config.build_settings["CC"] = ccache_clang_sh
+                    config.build_settings["LD"] = ccache_clang_sh
+                    config.build_settings["CXX"] = ccache_clangpp_sh
+                    config.build_settings["LDPLUSPLUS"] = ccache_clangpp_sh
+                end
+
+                project.save()
+            end
+        elsif ccache_available and !ccache_enabled
+            Pod::UI.puts("#{message_prefix}: Pass ':ccache_enabled => true' to 'react_native_post_install' in your Podfile or set environment variable 'USE_CCACHE=1' to increase the speed of subsequent builds")
+        elsif !ccache_available and ccache_enabled
+            Pod::UI.warn("#{message_prefix}: Install ccache or ensure your neither passing ':ccache_enabled => true' nor setting environment variable 'USE_CCACHE=1'")
+        end
+    end
+
     def self.fix_library_search_paths(installer)
         projects = self.extract_projects(installer)
 
@@ -136,7 +172,7 @@ class ReactNativePodsUtils
             project.build_configurations.each do |config|
                 # fix for weak linking
                 self.safe_init(config, other_ld_flags_key)
-                if self.is_using_xcode15_or_greater(:xcodebuild_manager => xcodebuild_manager)
+                if self.is_using_xcode15_0(:xcodebuild_manager => xcodebuild_manager)
                     self.add_value_to_setting_if_missing(config, other_ld_flags_key, xcode15_compatibility_flags)
                 else
                     self.remove_value_from_setting_if_present(config, other_ld_flags_key, xcode15_compatibility_flags)
@@ -145,15 +181,6 @@ class ReactNativePodsUtils
             project.save()
         end
 
-    end
-
-    def self.apply_flags_for_fabric(installer, fabric_enabled: false)
-        fabric_flag = "-DRN_FABRIC_ENABLED"
-        if fabric_enabled
-            self.add_compiler_flag_to_project(installer, fabric_flag)
-        else
-            self.remove_compiler_flag_from_project(installer, fabric_flag)
-        end
     end
 
     private
@@ -318,6 +345,22 @@ class ReactNativePodsUtils
             end
     end
 
+    def self.set_dynamic_frameworks_flags(installer)
+        installer.target_installation_results.pod_target_installation_results.each do |pod_name, target_installation_result|
+
+            # Set "RCT_DYNAMIC_FRAMEWORKS=1" if pod are installed with USE_FRAMEWORKS=dynamic
+            # This helps with backward compatibility.
+            if pod_name == 'React-RCTFabric' && ENV['USE_FRAMEWORKS'] == 'dynamic'
+                Pod::UI.puts "Setting -DRCT_DYNAMIC_FRAMEWORKS=1 to React-RCTFabric".green
+                rct_dynamic_framework_flag = " -DRCT_DYNAMIC_FRAMEWORKS=1"
+                target_installation_result.native_target.build_configurations.each do |config|
+                    prev_build_settings = config.build_settings['OTHER_CPLUSPLUSFLAGS'] != nil ? config.build_settings['OTHER_CPLUSPLUSFLAGS'] : "$(inherithed)"
+                    config.build_settings['OTHER_CPLUSPLUSFLAGS'] = prev_build_settings + rct_dynamic_framework_flag
+                end
+            end
+        end
+    end
+
     # ========= #
     # Utilities #
     # ========= #
@@ -361,7 +404,7 @@ class ReactNativePodsUtils
         end
     end
 
-    def self.is_using_xcode15_or_greater(xcodebuild_manager: Xcodebuild)
+    def self.is_using_xcode15_0(xcodebuild_manager: Xcodebuild)
         xcodebuild_version = xcodebuild_manager.version
 
         # The output of xcodebuild -version is something like
@@ -372,7 +415,8 @@ class ReactNativePodsUtils
         regex = /(\d+)\.(\d+)(?:\.(\d+))?/
         if match_data = xcodebuild_version.match(regex)
             major = match_data[1].to_i
-            return major >= 15
+            minor = match_data[2].to_i
+            return major == 15 && minor == 0
         end
 
         return false
@@ -534,7 +578,8 @@ class ReactNativePodsUtils
                     "NSAppTransportSecurity" => ats_configs
                 }
             else
-                plist["NSAppTransportSecurity"] = ats_configs
+                plist["NSAppTransportSecurity"] ||= {}
+                plist["NSAppTransportSecurity"] = plist["NSAppTransportSecurity"].merge(ats_configs)
             end
             Xcodeproj::Plist.write_to_path(plist, fullPlistPath)
         end
@@ -592,7 +637,6 @@ class ReactNativePodsUtils
             "fmt",
             "glog",
             "hermes-engine",
-            "libevent",
             "React-hermes",
         ]
     end
@@ -606,5 +650,47 @@ class ReactNativePodsUtils
             result << File.join(base_path, extra_path)
         }
         return result
+    end
+
+    def self.add_ndebug_flag_to_pods_in_release(installer)
+        ndebug_flag = " -DNDEBUG"
+
+        installer.aggregate_targets.each do |aggregate_target|
+            aggregate_target.xcconfigs.each do |config_name, config_file|
+                is_release = config_name.downcase.include?("release") || config_name.downcase.include?("production")
+                unless is_release
+                    next
+                end
+                self.add_flag_to_map_with_inheritance(config_file.attributes, 'OTHER_CPLUSPLUSFLAGS', ndebug_flag);
+                self.add_flag_to_map_with_inheritance(config_file.attributes, 'OTHER_CFLAGS', ndebug_flag);
+
+                xcconfig_path = aggregate_target.xcconfig_path(config_name)
+                config_file.save_as(xcconfig_path)
+            end
+        end
+
+        installer.target_installation_results.pod_target_installation_results.each do |pod_name, target_installation_result|
+            target_installation_result.native_target.build_configurations.each do |config|
+                is_release = config.name.downcase.include?("release") || config.name.downcase.include?("production")
+                unless is_release
+                    next
+                end
+                self.add_flag_to_map_with_inheritance(config.build_settings, 'OTHER_CPLUSPLUSFLAGS', ndebug_flag);
+                self.add_flag_to_map_with_inheritance(config.build_settings, 'OTHER_CFLAGS', ndebug_flag);
+            end
+        end
+    end
+
+    def self.add_flag_to_map_with_inheritance(map, field, flag)
+        if map[field] == nil
+            map[field] = "$(inherited)" + flag
+        else
+            unless map[field].include?(flag)
+                map[field] = map[field] + flag
+            end
+            unless map[field].include?("$(inherited)")
+                map[field] = "$(inherited) " + map[field]
+            end
+        end
     end
 end

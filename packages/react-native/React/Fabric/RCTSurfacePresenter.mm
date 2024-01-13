@@ -256,10 +256,6 @@ static BackgroundExecutor RCTGetBackgroundExecutor()
 {
   auto reactNativeConfig = _contextContainer->at<std::shared_ptr<const ReactNativeConfig>>("ReactNativeConfig");
 
-  if (reactNativeConfig && reactNativeConfig->getBool("rn_convergence:dispatch_pointer_events")) {
-    RCTSetDispatchW3CPointerEvents(YES);
-  }
-
   if (reactNativeConfig && reactNativeConfig->getBool("react_fabric:enable_cpp_props_iterator_setter_ios")) {
     CoreFeatures::enablePropIteratorSetter = true;
   }
@@ -274,10 +270,6 @@ static BackgroundExecutor RCTGetBackgroundExecutor()
 
   if (reactNativeConfig && reactNativeConfig->getBool("react_fabric:enable_mount_hooks_ios")) {
     CoreFeatures::enableMountHooks = true;
-  }
-
-  if (reactNativeConfig && reactNativeConfig->getBool("react_fabric:disable_scroll_event_throttle_requirement")) {
-    CoreFeatures::disableScrollEventThrottleRequirement = true;
   }
 
   if (reactNativeConfig && reactNativeConfig->getBool("react_fabric:enable_default_async_batched_priority")) {

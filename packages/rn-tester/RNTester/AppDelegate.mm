@@ -8,6 +8,7 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import <React/RCTDefines.h>
 #import <React/RCTLinkingManager.h>
 #import <ReactCommon/RCTSampleTurboModule.h>
 #import <ReactCommon/SampleTurboCxxModule.h>
@@ -16,18 +17,12 @@
 #import <React/RCTPushNotificationManager.h>
 #endif
 
-#if RCT_NEW_ARCH_ENABLED
 #import <NativeCxxModuleExample/NativeCxxModuleExample.h>
 #ifndef RN_DISABLE_OSS_PLUGIN_HEADER
 #import <RNTMyNativeViewComponentView.h>
 #endif
-#endif
 
-#if BUNDLE_PATH
-NSString *kBundlePath = @"xplat/js/RKJSModules/EntryPoints/RNTesterTestBundle.js";
-#else
-NSString *kBundlePath = @"js/RNTesterApp.ios";
-#endif
+static NSString *kBundlePath = @"js/RNTesterApp.ios";
 
 @implementation AppDelegate
 
@@ -39,6 +34,11 @@ NSString *kBundlePath = @"js/RNTesterApp.ios";
   self.initialProps = [self prepareInitialProps];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+  [super applicationDidEnterBackground:application];
 }
 
 - (NSDictionary *)prepareInitialProps
@@ -78,11 +78,9 @@ NSString *kBundlePath = @"js/RNTesterApp.ios";
   if (name == std::string([@"SampleTurboCxxModule" UTF8String])) {
     return std::make_shared<facebook::react::SampleTurboCxxModule>(jsInvoker);
   }
-#ifdef RCT_NEW_ARCH_ENABLED
   if (name == facebook::react::NativeCxxModuleExample::kModuleName) {
     return std::make_shared<facebook::react::NativeCxxModuleExample>(jsInvoker);
   }
-#endif
   return nullptr;
 }
 
@@ -117,9 +115,15 @@ NSString *kBundlePath = @"js/RNTesterApp.ios";
 
 #endif
 
+#pragma mark - New Arch Enabled settings
+
+- (BOOL)bridgelessEnabled
+{
+  return [super bridgelessEnabled];
+}
+
 #pragma mark - RCTComponentViewFactoryComponentProvider
 
-#if RCT_NEW_ARCH_ENABLED
 #ifndef RN_DISABLE_OSS_PLUGIN_HEADER
 - (nonnull NSDictionary<NSString *, Class<RCTComponentViewProtocol>> *)thirdPartyFabricComponents
 {
@@ -131,6 +135,5 @@ NSString *kBundlePath = @"js/RNTesterApp.ios";
 {
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:kBundlePath];
 }
-#endif
 
 @end

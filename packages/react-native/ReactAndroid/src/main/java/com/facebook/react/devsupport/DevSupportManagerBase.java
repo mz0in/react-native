@@ -113,8 +113,6 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
   private @Nullable List<ErrorCustomizer> mErrorCustomizers;
   private @Nullable PackagerLocationCustomizer mPackagerLocationCustomizer;
 
-  private final InspectorPackagerConnection.BundleStatus mBundleStatus;
-
   private @Nullable final Map<String, RequestHandler> mCustomPackagerCommandHandlers;
 
   private @Nullable final SurfaceDelegateFactory mSurfaceDelegateFactory;
@@ -134,12 +132,10 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
     mApplicationContext = applicationContext;
     mJSAppBundleName = packagerPathForJSBundleName;
     mDevSettings = new DevInternalSettings(applicationContext, this::reloadSettings);
-    mBundleStatus = new InspectorPackagerConnection.BundleStatus();
     mDevServerHelper =
         new DevServerHelper(
             mDevSettings,
             mApplicationContext.getPackageName(),
-            () -> mBundleStatus,
             mDevSettings.getPackagerConnectionSettings());
     mBundleDownloadListener = devBundleDownloadListener;
 
@@ -363,15 +359,16 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
           }
         });
 
-    if (mDevSettings.isDeviceDebugEnabled()) {
-      // On-device JS debugging (CDP). Render action to open debugger frontend.
+    if (mDevSettings.isRemoteJSDebugEnabled()) {
+      // [Deprecated in React Native 0.73] Remote JS debugging. Handle reload
+      // via external JS executor. This capability will be removed in a future
+      // release.
+      mDevSettings.setRemoteJSDebugEnabled(false);
+      handleReloadJS();
+    }
 
-      // Reset the old debugger setting so no one gets stuck.
-      // TODO: Remove in a few weeks.
-      if (mDevSettings.isRemoteJSDebugEnabled()) {
-        mDevSettings.setRemoteJSDebugEnabled(false);
-        handleReloadJS();
-      }
+    if (mDevSettings.isDeviceDebugEnabled() && !mDevSettings.isRemoteJSDebugEnabled()) {
+      // On-device JS debugging (CDP). Render action to open debugger frontend.
       options.put(
           mApplicationContext.getString(R.string.catalyst_debug_open),
           () ->
@@ -413,9 +410,7 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
         });
 
     options.put(
-        mDevSettings.isElementInspectorEnabled()
-            ? mApplicationContext.getString(R.string.catalyst_inspector_stop)
-            : mApplicationContext.getString(R.string.catalyst_inspector),
+        mApplicationContext.getString(R.string.catalyst_inspector_toggle),
         new DevOptionHandler() {
           @Override
           public void onOptionSelected() {
@@ -887,10 +882,6 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
           @Override
           public void onSuccess() {
             hideDevLoadingView();
-            synchronized (DevSupportManagerBase.this) {
-              mBundleStatus.isLastDownloadSuccess = true;
-              mBundleStatus.updateTimestamp = System.currentTimeMillis();
-            }
             if (mBundleDownloadListener != null) {
               mBundleDownloadListener.onSuccess();
             }
@@ -912,9 +903,6 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
           @Override
           public void onFailure(final Exception cause) {
             hideDevLoadingView();
-            synchronized (DevSupportManagerBase.this) {
-              mBundleStatus.isLastDownloadSuccess = false;
-            }
             if (mBundleDownloadListener != null) {
               mBundleDownloadListener.onFailure(cause);
             }
@@ -1044,8 +1032,10 @@ public abstract class DevSupportManagerBase implements DevSupportManager {
 
             @Override
             public void onPackagerReloadCommand() {
-              // Disable debugger to resume the JsVM & avoid thread locks while reloading
-              mDevServerHelper.disableDebugger();
+              if (!InspectorFlags.getEnableModernCDPRegistry()) {
+                // Disable debugger to resume the JsVM & avoid thread locks while reloading
+                mDevServerHelper.disableDebugger();
+              }
               UiThreadUtil.runOnUiThread(() -> handleReloadJS());
             }
 
